@@ -12,63 +12,65 @@ import java.time.Duration;
 @Test
 public class RegisterTest extends  Base{
 
+    @Test(priority = 1)
     public void verifyHomePageIsDisplayedTest()
     {
         homePage.verifyHomePageIsDisplayed();
     }
-    /*
-        Password mismatch → Alert: Passwords do not match!
-        Bad email format → Alert: Please enter a valid email address
-        Password < 8 → Alert: Password must be at least 8 characters long
-        Success → Alert includes Registration successful; login form shown with email filled.
-     */
+
 
     @Test(dependsOnMethods = "verifyHomePageIsDisplayedTest")
-    public void clickLearningMaterialTest()
-    {
-        homePage.clickLearningMaterial();
-        loginPage.clickRegister();
-    }
-
-    @Test(dependsOnMethods = "clickLearningMaterialTest")
-    public void passwordMismatchRegistrationTest()
-    {
-        registerPage.registerAccount("Java","TestNG","java@ng.com","T3sT","TEST");
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        wait.until(ExpectedConditions.alertIsPresent());
-
-        Alert alert = driver.switchTo().alert();
-        String actualText = alert.getText();
-        Assert.assertEquals(actualText, "Passwords do not match!");
-
-        alert.accept();
-    }
-
-    @Test(dependsOnMethods = "clickLearningMaterialTest")
     public void badEmailFormatTest()
     {
-        registerPage.registerAccount("Java","TestNG","testng.com","T3st","T3st");
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        homePage.navigateHomePage("learning");
+        loginPage.clickRegister();
+
+        registerPage.registerAccount("Java","TestNG","testng","T3st","T3st");
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         wait.until(ExpectedConditions.alertIsPresent());
 
         Alert alert= driver.switchTo().alert();
         String actualText = alert.getText();
         Assert.assertEquals(actualText,"Please enter a valid email address");
+        alert.accept();
+        registerPage.clearRegisterFields();
+
     }
 
-    @Test(dependsOnMethods = "clickLearningMaterialTest")
+    @Test(dependsOnMethods = "badEmailFormatTest")
+    public void passwordMismatchRegistrationTest()
+    {
+
+        registerPage.registerAccount("Java","TestNG","java@ng.com","T3sT","TEST");
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+        wait.until(ExpectedConditions.alertIsPresent());
+
+        Alert alert = driver.switchTo().alert();
+        String actualText = alert.getText();
+        Assert.assertEquals(actualText, "Passwords do not match!");
+        alert.accept();
+        registerPage.clearRegisterFields();
+    }
+
+
+
+    @Test(dependsOnMethods = "verifyHomePageIsDisplayedTest")
     public void passwordLengthTest()
     {
+        homePage.navigateHomePage("learning");
+        loginPage.clickRegister();
         registerPage.registerAccount("Java", "TestNG","test@ng.com","short","short");
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
         wait.until(ExpectedConditions.alertIsPresent());
 
         Alert alert= driver.switchTo().alert();
         String actualText = alert.getText();
         Assert.assertEquals(actualText,"Password must be at least 8 characters long");
+        alert.accept();
+        registerPage.clearRegisterFields();
     }
 
-    @Test(dependsOnMethods = "clickLearningMaterialTest")
+    @Test(dependsOnMethods = "passwordLengthTest")
     public  void validRegistrationTest()
     {
         registerPage.registerAccount("Java","TestNG","test@ng.com","ValidPassword","ValidPassword");

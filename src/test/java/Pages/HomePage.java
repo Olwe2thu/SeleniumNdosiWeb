@@ -45,12 +45,7 @@ public class HomePage {
         new WebDriverWait(driver, Duration.ofSeconds(10)).until(visibilityOf(homepageTitle_id));
         homepageTitle_id.isDisplayed();
     }
-    public void clickLearningMaterial()
-    {
 
-        learningMaterial_id.click();
-
-    }
 
     public void navigateHomePage(String page)
     {

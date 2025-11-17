@@ -28,7 +28,13 @@ public class LearningMaterialPage {
 
     public void verifyWelcomeTitle()
     {
+        new WebDriverWait(driver, Duration.ofSeconds(20)).until(visibilityOf(welcomeTitle_id));
         welcomeTitle_id.isDisplayed();
+    }
+
+    public  void logout()
+    {
+        logout_btn_id.click();
     }
 
     public void navigateLearningMaterialPage(String page)

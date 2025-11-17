@@ -34,7 +34,7 @@ public class LoginPage {
 
     public void login( String email, String password)
     {
-        new WebDriverWait(driver, Duration.ofSeconds(10)).until(visibilityOf(email_id));
+        new WebDriverWait(driver, Duration.ofSeconds(20)).until(visibilityOf(email_id));
         email_id.sendKeys(email);
         password_id.sendKeys(password);
         login_btn_id.click();
@@ -44,5 +44,12 @@ public class LoginPage {
     public  void clickRegister()
     {
         signUp_btn.click();
+    }
+
+    public void clearField()
+    {
+        new WebDriverWait(driver, Duration.ofSeconds(20)).until(visibilityOf(email_id));
+        email_id.clear();
+        password_id.clear();
     }
 }

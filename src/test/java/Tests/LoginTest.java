@@ -14,85 +14,65 @@ import org.testng.annotations.Test;
 import java.time.Duration;
 import static org.testng.AssertJUnit.assertTrue;
 
+
 @Test
 public class LoginTest extends Base {
 
+    // REVIEW  THE DEPENDS ON FOR  THE  TESTS
+
+    @Test(priority = 1)
     public void verifyHomePageIsDisplayedTest()
     {
         homePage.verifyHomePageIsDisplayed();
     }
 
-    @Test(dependsOnMethods = "verifyHomePageIsDisplayedTest")
-    public void clickLearningMaterialTest()
-    {
-        homePage.clickLearningMaterial();
-    }
 
-    @Test(dependsOnMethods = "clickLearningMaterialTest")
+    @Test(priority = 2)
     public void loginTest()
     {
+        homePage.navigateHomePage("learning");
         loginPage.login("gti@test.com", "ozner22ktw");
         learningMaterialPage.verifyWelcomeTitle();
+        learningMaterialPage.logout();
     }
-    @Test(dependsOnMethods = "clickLearningMaterialTest")
+
+    @Test(dependsOnMethods = "loginTest")
     public void extraSpacesLoginTest()
     {
+
         loginPage.login("gti@test.com ", "ozner22ktw");
         learningMaterialPage.verifyWelcomeTitle();
+        learningMaterialPage.logout();
     }
 
-    @Test(dependsOnMethods = "clickLearningMaterialTest")
+    @Test(dependsOnMethods = "extraSpacesLoginTest")
     public void invalidLoginTest()
     {
-        loginPage.login("gtti@test.com", "oznerk");
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        homePage.navigateHomePage("learning");
+        loginPage.login("gti@wrongEmail.com", "ozner22ktw");
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until(ExpectedConditions.alertIsPresent());
-
 
         Alert alert = driver.switchTo().alert();
         String actualText = alert.getText();
         Assert.assertEquals(actualText, "Invalid email or password");
+        alert.accept();
 
-        // Accept the alertalert.accept();
+
     }
-
-
-
-    @Test(dependsOnMethods = "loginTest")
-    public void navigateToWebAutomationAdvance() throws InterruptedException
+    @Test(dependsOnMethods = "invalidLoginTest")
+    public  void switchTabsTest()
     {
-        learningMaterialPage.navigateLearningMaterialPage("web");
-        Thread.sleep(3000);
-        //assert
-    }
-
-    @Test(dependsOnMethods = "navigateToWebAutomationAdvance")
-    public void formCompletionTest() throws InterruptedException
-    {
-        webAutomationAdvancePage.completeInvoice("Phone","Apple","White","3","404 Error Street");
-        Thread.sleep(3000);
-    }
-
-    @Test(dependsOnMethods = "formCompletionTest")
-    public  void verifyOrderSummary() throws  InterruptedException
-    {
-        assert webAutomationAdvancePage.verify64GBPricingSummary(3) == 1200;
-        Thread.sleep(2000);
+        loginPage.clearField();
+        loginPage.login("gti@test.com", "ozner22ktw");
+        learningMaterialPage.verifyWelcomeTitle();
+        homePage.navigateHomePage("enrol");
+        homePage.navigateHomePage("learning");
+        loginPage.login("gti@test.com", "ozner22ktw");
+        learningMaterialPage.verifyWelcomeTitle();
 
     }
 
-
-
-
-
-
-
-
-//    @AfterTest
-//    public  void closeBrowser()
-//    {
-//        driver.quit();
-//    }
 
 
 }
